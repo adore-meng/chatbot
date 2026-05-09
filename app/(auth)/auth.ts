@@ -1,99 +1,48 @@
-import { compare } from "bcrypt-ts";
-import NextAuth, { type DefaultSession } from "next-auth";
-import type { DefaultJWT } from "next-auth/jwt";
-import Credentials from "next-auth/providers/credentials";
-import { DUMMY_PASSWORD } from "@/lib/constants";
-import { createGuestUser, getUser } from "@/lib/db/queries";
-import { authConfig } from "./auth.config";
+import "server-only";
 
-export type UserType = "guest" | "regular";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import {
+  getCompanyAuthToken,
+  resolveSessionUserFromToken,
+} from "@/lib/auth/company-auth-cookie";
+import { COMPANY_AUTH_TOKEN_COOKIE } from "@/lib/auth/sso-redirect";
 
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      type: UserType;
-    } & DefaultSession["user"];
-  }
+export type { UserType } from "@/lib/auth/user-type";
 
-  interface User {
-    id?: string;
-    email?: string | null;
-    type: UserType;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT extends DefaultJWT {
+/** Server session derived from `company_auth_token` (no NextAuth, no local passwords). */
+export type Session = {
+  user: {
     id: string;
-    type: UserType;
+    email: string | null;
+    type: import("@/lib/auth/user-type").UserType;
+    name?: string | null;
+    image?: string | null;
+  };
+};
+
+export async function auth(): Promise<Session | null> {
+  const token = await getCompanyAuthToken();
+  if (!token) {
+    return null;
   }
+  const { id, email } = resolveSessionUserFromToken(token);
+  return {
+    user: {
+      id,
+      email,
+      type: "regular",
+      name: null,
+      image: null,
+    },
+  };
 }
 
-export const {
-  handlers: { GET, POST },
-  auth,
-  signIn,
-  signOut,
-} = NextAuth({
-  ...authConfig,
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const email = String(credentials.email ?? "");
-        const password = String(credentials.password ?? "");
-        const users = await getUser(email);
-
-        if (users.length === 0) {
-          await compare(password, DUMMY_PASSWORD);
-          return null;
-        }
-
-        const [user] = users;
-
-        if (!user.password) {
-          await compare(password, DUMMY_PASSWORD);
-          return null;
-        }
-
-        const passwordsMatch = await compare(password, user.password);
-
-        if (!passwordsMatch) {
-          return null;
-        }
-
-        return { ...user, type: "regular" };
-      },
-    }),
-    Credentials({
-      id: "guest",
-      credentials: {},
-      async authorize() {
-        const [guestUser] = await createGuestUser();
-        return { ...guestUser, type: "guest" };
-      },
-    }),
-  ],
-  callbacks: {
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id as string;
-        token.type = user.type;
-      }
-
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.type = token.type;
-      }
-
-      return session;
-    },
-  },
-});
+/**
+ * Clears company SSO cookie and redirects. Use from Server Actions / Route Handlers.
+ */
+export async function signOut(options?: { redirectTo?: string }) {
+  const store = await cookies();
+  store.delete(COMPANY_AUTH_TOKEN_COOKIE);
+  redirect(options?.redirectTo ?? "/");
+}

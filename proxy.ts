@@ -1,38 +1,47 @@
-import { type NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import {
+  buildCompanySsoLoginUrl,
+  COMPANY_AUTH_TOKEN_COOKIE,
+  getCompanySsoLoginBaseUrl,
+} from "@/lib/auth/sso-redirect";
 
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const isAuthDisabledForTests =
+  process.env.NODE_ENV === "test" ||
+  Boolean(process.env.PLAYWRIGHT) ||
+  Boolean(process.env.CI_PLAYWRIGHT) ||
+  Boolean(process.env.PLAYWRIGHT_TEST_BASE_URL);
 
-  if (pathname.startsWith("/ping")) {
-    return new Response("pong", { status: 200 });
-  }
+function hasCompanyAuthToken(request: NextRequest): boolean {
+  const raw = request.cookies.get(COMPANY_AUTH_TOKEN_COOKIE)?.value?.trim();
+  return Boolean(raw);
+}
 
-  if (pathname.startsWith("/api/auth")) {
+export function proxy(request: NextRequest) {
+  if (isAuthDisabledForTests) {
     return NextResponse.next();
   }
 
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-    secureCookie: !isDevelopmentEnvironment,
-  });
+  const { pathname } = request.nextUrl;
 
-  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
-
-  if (!token) {
-    const redirectUrl = encodeURIComponent(new URL(request.url).pathname);
-
-    return NextResponse.redirect(
-      new URL(`${base}/api/auth/guest?redirectUrl=${redirectUrl}`, request.url)
-    );
+  if (pathname.startsWith("/api/auth/callback")) {
+    return NextResponse.next();
   }
 
-  const isGuest = guestRegex.test(token?.email ?? "");
+  if (pathname.startsWith("/api/auth/logout")) {
+    return NextResponse.next();
+  }
 
-  if (token && !isGuest && ["/login", "/register"].includes(pathname)) {
-    return NextResponse.redirect(new URL(`${base}/`, request.url));
+  if (pathname.startsWith("/ping")) {
+    return NextResponse.next();
+  }
+
+  if (!hasCompanyAuthToken(request)) {
+    const loginUrl = buildCompanySsoLoginUrl({
+      requestOrigin: request.nextUrl.origin,
+      ssoLoginBaseUrl: getCompanySsoLoginBaseUrl(),
+    });
+    return NextResponse.redirect(loginUrl, 302);
   }
 
   return NextResponse.next();
@@ -40,12 +49,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/chat/:id",
-    "/api/:path*",
-    "/login",
-    "/register",
-
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };
