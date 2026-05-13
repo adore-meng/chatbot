@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ComponentType, ReactNode } from "react";
 import {
   Collapsible,
@@ -34,9 +35,11 @@ const taskItems = [
 ];
 
 export function BioAnalystSidebar() {
+  const pathname = usePathname();
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const ToggleIcon = isCollapsed ? PanelLeftOpenIcon : PanelLeftCloseIcon;
+  const isNewTaskActive = pathname === "/";
 
   return (
     <aside
@@ -85,6 +88,7 @@ export function BioAnalystSidebar() {
       <nav className="space-y-1">
         {navItems.map((item) => (
           <SidebarNavItem
+            active={isRouteActive(pathname, item.href)}
             href={item.href}
             icon={item.icon}
             isCollapsed={isCollapsed}
@@ -117,8 +121,12 @@ export function BioAnalystSidebar() {
         </button>
 
         <Link
+          aria-current={isNewTaskActive ? "page" : undefined}
           className={cn(
-            "flex h-9 items-center gap-2 rounded-lg bg-[#f0eaff] px-3 font-bold text-[12px] text-[#6646e8] shadow-[inset_0_0_0_1px_rgb(109_93_252_/_0.06)] transition-colors hover:bg-[#e9e1ff]",
+            "flex h-9 items-center gap-2 rounded-lg px-3 font-bold text-[12px] shadow-[inset_0_0_0_1px_rgb(109_93_252_/_0.06)] transition-colors",
+            isNewTaskActive
+              ? "bg-[#f0eaff] text-[#6646e8] hover:bg-[#e9e1ff]"
+              : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
             isCollapsed && "justify-center px-2"
           )}
           href="/"
@@ -128,7 +136,7 @@ export function BioAnalystSidebar() {
         </Link>
 
         <SidebarNavItem
-          active
+          active={isRouteActive(pathname, "/projects")}
           href="/projects"
           icon={FolderIcon}
           isCollapsed={isCollapsed}
@@ -198,11 +206,13 @@ function SidebarNavItem({
 }) {
   return (
     <Link
+      aria-current={active ? "page" : undefined}
       aria-label={typeof children === "string" ? children : undefined}
       className={cn(
         "flex h-8 items-center gap-2 rounded-lg px-2 font-medium text-[12px] text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900",
         isCollapsed && "justify-center",
-        active && "bg-slate-50 text-slate-900"
+        active &&
+          "bg-[#f0eaff] font-bold text-[#6646e8] hover:bg-[#e9e1ff] hover:text-[#6646e8]"
       )}
       href={href}
     >
@@ -212,4 +222,8 @@ function SidebarNavItem({
       </span>
     </Link>
   );
+}
+
+function isRouteActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
