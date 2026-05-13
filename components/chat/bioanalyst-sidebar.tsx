@@ -23,8 +23,8 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { label: "Recent", icon: Clock3Icon },
-  { label: "Community", icon: UsersIcon },
+  { label: "Recent", href: "/recent", icon: Clock3Icon },
+  { label: "Community", href: "/community", icon: UsersIcon },
 ];
 
 const taskItems = [
@@ -85,6 +85,7 @@ export function BioAnalystSidebar() {
       <nav className="space-y-1">
         {navItems.map((item) => (
           <SidebarNavItem
+            href={item.href}
             icon={item.icon}
             isCollapsed={isCollapsed}
             key={item.label}
@@ -126,7 +127,12 @@ export function BioAnalystSidebar() {
           <span className={cn(isCollapsed && "hidden")}>New Task</span>
         </Link>
 
-        <SidebarNavItem active icon={FolderIcon} isCollapsed={isCollapsed}>
+        <SidebarNavItem
+          active
+          href="/projects"
+          icon={FolderIcon}
+          isCollapsed={isCollapsed}
+        >
           All Projects
         </SidebarNavItem>
       </div>
@@ -180,11 +186,13 @@ export function BioAnalystSidebar() {
 function SidebarNavItem({
   active,
   children,
+  href,
   icon: Icon,
   isCollapsed,
 }: {
   active?: boolean;
   children: ReactNode;
+  href: string;
   icon: ComponentType<{ className?: string }>;
   isCollapsed: boolean;
 }) {
@@ -196,7 +204,7 @@ function SidebarNavItem({
         isCollapsed && "justify-center",
         active && "bg-slate-50 text-slate-900"
       )}
-      href="/"
+      href={href}
     >
       <Icon className="size-3.5 shrink-0" />
       <span className={cn("truncate", isCollapsed && "hidden")}>

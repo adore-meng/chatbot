@@ -1,7 +1,7 @@
 "use client";
 
 import type { UseChatHelpers } from "@ai-sdk/react";
-import { deleteTrailingMessages } from "@/app/(chat)/actions";
+import { deleteTrailingMessages } from "@/app/(dashboard)/actions";
 import type { ChatMessage } from "@/lib/types";
 
 export async function submitEditedMessage({
