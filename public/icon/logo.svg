@@ -1,0 +1,42 @@
+<svg width="900" height="520" viewBox="0 0 900 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="180" y1="60" x2="520" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6EA8FF"/>
+      <stop offset="1" stop-color="#7A2FFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Orbit -->
+  <ellipse cx="170" cy="240" rx="145" ry="60"
+           transform="rotate(-22 170 240)"
+           stroke="#C9CCFF"
+           stroke-width="14"
+           fill="none"/>
+
+  <!-- Orbit Dot -->
+  <circle cx="70" cy="135" r="22" fill="url(#grad)"/>
+
+  <!-- Hexagon -->
+  <path d="M360 40
+           L520 130
+           L520 310
+           L360 400
+           L200 310
+           L200 130 Z"
+        fill="url(#grad)"/>
+
+  <!-- BA Text -->
+  <text x="360" y="255"
+        text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif"
+        font-size="110"
+        font-weight="700"
+        fill="white">
+    BA
+  </text>
+
+  <!-- Bar Chart -->
+  <rect x="545" y="205" width="38" height="120" rx="19" fill="url(#grad)" opacity="0.45"/>
+  <rect x="605" y="140" width="38" height="185" rx="19" fill="url(#grad)" opacity="0.7"/>
+  <rect x="665" y="80" width="38" height="245" rx="19" fill="url(#grad)"/>
+</svg>

@@ -1,6 +1,36 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Chat Page", () => {
+  test("shows BioAnalyst workbench navigation and user menu", async ({
+    page,
+  }) => {
+    await page.goto("/");
+
+    await expect(page.getByText("BioAnalyst")).toBeVisible();
+    await expect(page.getByText("AI DATA INTELLIGENCE")).toBeVisible();
+    await expect(page.getByText("New Tasks")).toBeVisible();
+    await expect(page.getByText("weikun rong's team")).toBeVisible();
+    await expect(page.getByText("+ New Task")).toBeVisible();
+    await expect(page.getByText("Analyze outliers in dose...")).toBeVisible();
+
+    await page.getByRole("button", { name: "Open user menu" }).click();
+    await expect(page.getByText("Christopher W.")).toBeVisible();
+    await expect(page.getByText("rongweikun@gmail.com")).toBeVisible();
+    await expect(page.getByText("Settings")).toBeVisible();
+    await expect(page.getByText("Billing")).toBeVisible();
+    await expect(page.getByText("Log out")).toBeVisible();
+  });
+
+  test("can collapse and expand BioAnalyst sidebar", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByRole("button", { name: "Collapse sidebar" }).click();
+    await expect(page.getByText("AI DATA INTELLIGENCE")).toBeHidden();
+
+    await page.getByRole("button", { name: "Expand sidebar" }).click();
+    await expect(page.getByText("AI DATA INTELLIGENCE")).toBeVisible();
+  });
+
   test("home page loads with input field", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByTestId("multimodal-input")).toBeVisible();

@@ -419,7 +419,7 @@ function PureMultimodalInput({
       </div>
 
       <PromptInput
-        className="[&>div]:rounded-2xl [&>div]:border [&>div]:border-border/30 [&>div]:bg-card/70 [&>div]:shadow-[var(--shadow-composer)] [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:shadow-[var(--shadow-composer-focus)]"
+        className="[&>div]:rounded-2xl [&>div]:border [&>div]:border-slate-100 [&>div]:bg-white [&>div]:shadow-[0_18px_60px_rgb(15_23_42_/_0.07)] [&>div]:transition-shadow [&>div]:duration-300 [&>div]:focus-within:shadow-[0_20px_70px_rgb(109_93_252_/_0.13)]"
         onSubmit={() => {
           if (input.startsWith("/")) {
             const query = input.slice(1).trim();
@@ -510,7 +510,9 @@ function PureMultimodalInput({
             }
           }}
           placeholder={
-            editingMessage ? "Edit your message..." : "Ask anything..."
+            editingMessage
+              ? "Edit your message..."
+              : "Describe your analysis goal or upload a scientific dataset..."
           }
           ref={textareaRef}
           value={input}

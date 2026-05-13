@@ -8,6 +8,8 @@ import type { ChatMessage } from "@/lib/types";
 import { Suggestion } from "../ai-elements/suggestion";
 import type { VisibilityType } from "./visibility-selector";
 
+const datasetLabels = ["immune_test_data.xlsx", "scRNA_Data.xlsx"];
+
 type SuggestedActionsProps = {
   chatId: string;
   sendMessage: UseChatHelpers<ChatMessage>["sendMessage"];
@@ -19,7 +21,7 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
 
   return (
     <div
-      className="flex w-full gap-2.5 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:overflow-visible"
+      className="mx-auto flex w-full max-w-2xl flex-col gap-3 overflow-visible pb-1"
       data-testid="suggested-actions"
       style={{
         scrollbarWidth: "none",
@@ -30,7 +32,7 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
-          className="min-w-[200px] shrink-0 sm:min-w-0 sm:shrink"
+          className="min-w-0"
           exit={{ opacity: 0, y: 16 }}
           initial={{ opacity: 0, y: 16 }}
           key={suggestedAction}
@@ -41,7 +43,7 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
           }}
         >
           <Suggestion
-            className="h-auto w-full whitespace-nowrap rounded-xl border border-border/50 bg-card/30 px-4 py-3 text-left text-[12px] leading-relaxed text-muted-foreground transition-all duration-200 sm:whitespace-normal sm:p-4 sm:text-[13px] hover:-translate-y-0.5 hover:bg-card/60 hover:text-foreground hover:shadow-[var(--shadow-card)]"
+            className="h-auto w-full justify-between gap-4 whitespace-normal rounded-xl border border-slate-100 bg-white px-4 py-3 text-left text-[12px] leading-relaxed text-slate-600 shadow-[0_10px_30px_rgb(15_23_42_/_0.04)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-slate-900 hover:shadow-[0_18px_45px_rgb(15_23_42_/_0.08)]"
             onClick={(suggestion) => {
               window.history.pushState(
                 {},
@@ -55,7 +57,10 @@ function PureSuggestedActions({ chatId, sendMessage }: SuggestedActionsProps) {
             }}
             suggestion={suggestedAction}
           >
-            {suggestedAction}
+            <span className="line-clamp-2 flex-1">{suggestedAction}</span>
+            <span className="hidden shrink-0 rounded-full bg-slate-50 px-2.5 py-1 text-[10px] text-slate-400 sm:inline">
+              {datasetLabels.at(index)}
+            </span>
           </Suggestion>
         </motion.div>
       ))}
