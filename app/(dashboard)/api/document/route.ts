@@ -6,7 +6,7 @@ import {
   getDocumentsById,
   saveDocument,
   updateDocumentContent,
-} from "@/lib/db/queries";
+} from "@/lib/mock-store/queries";
 import { ChatbotError } from "@/lib/errors";
 
 const documentSchema = z.object({

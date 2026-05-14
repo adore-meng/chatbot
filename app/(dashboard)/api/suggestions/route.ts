@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth/auth";
-import { getSuggestionsByDocumentId } from "@/lib/db/queries";
+import { getSuggestionsByDocumentId } from "@/lib/mock-store/queries";
 import { ChatbotError } from "@/lib/errors";
 
 export async function GET(request: Request) {

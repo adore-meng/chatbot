@@ -2,7 +2,6 @@ import "server-only";
 
 import type { ArtifactKind } from "@/components/chat/artifact";
 import type { VisibilityType } from "@/components/chat/visibility-selector";
-import { generateUUID } from "../utils";
 import type {
   Chat,
   DBMessage,
@@ -11,8 +10,9 @@ import type {
   Suggestion,
   User,
   Vote,
-} from "./schema";
-import { generateHashedPassword } from "./utils";
+} from "@/lib/domain-types";
+import { generateHashedPassword } from "@/lib/password-utils";
+import { generateUUID } from "@/lib/utils";
 
 const DEFAULT_USER_ID = "00000000-0000-4000-8000-000000000001";
 const DEFAULT_CHAT_ID = "00000000-0000-4000-8000-000000000101";

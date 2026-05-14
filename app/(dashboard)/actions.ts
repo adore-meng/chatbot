@@ -12,7 +12,7 @@ import {
   getChatById,
   getMessageById,
   updateChatVisibilityById,
-} from "@/lib/db/queries";
+} from "@/lib/mock-store/queries";
 import { getTextFromMessage } from "@/lib/utils";
 
 export async function saveChatModelAsCookie(model: string) {

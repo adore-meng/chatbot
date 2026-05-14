@@ -24,7 +24,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import type { AppUser } from "@/lib/auth/app-user";
-import type { Chat } from "@/lib/db/schema";
+import type { Chat } from "@/lib/domain-types";
 import { fetcher } from "@/lib/utils";
 import { LoaderIcon } from "./icons";
 import { ChatItem } from "./sidebar-history-item";

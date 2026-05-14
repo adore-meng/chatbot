@@ -2,7 +2,7 @@ import { tool, type UIMessageStreamWriter } from "ai";
 import { z } from "zod";
 import { documentHandlersByArtifactKind } from "@/lib/artifacts/server";
 import type { Session } from "@/lib/auth/auth";
-import { getDocumentById } from "@/lib/db/queries";
+import { getDocumentById } from "@/lib/mock-store/queries";
 import type { ChatMessage } from "@/lib/types";
 
 type UpdateDocumentProps = {

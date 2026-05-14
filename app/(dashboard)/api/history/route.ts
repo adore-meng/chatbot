@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { deleteAllChatsByUserId, getChatsByUserId } from "@/lib/db/queries";
+import { deleteAllChatsByUserId, getChatsByUserId } from "@/lib/mock-store/queries";
 import { ChatbotError } from "@/lib/errors";
 
 export async function GET(request: NextRequest) {

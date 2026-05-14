@@ -4,8 +4,8 @@ import { sheetDocumentHandler } from "@/artifacts/sheet/server";
 import { textDocumentHandler } from "@/artifacts/text/server";
 import type { ArtifactKind } from "@/components/chat/artifact";
 import type { Session } from "@/lib/auth/auth";
-import { saveDocument } from "../db/queries";
-import type { Document } from "../db/schema";
+import type { Document } from "@/lib/domain-types";
+import { saveDocument } from "@/lib/mock-store/queries";
 import type { ChatMessage } from "../types";
 
 export type SaveDocumentProps = {

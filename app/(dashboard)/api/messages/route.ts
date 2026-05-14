@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth/auth";
-import { getChatById, getMessagesByChatId } from "@/lib/db/queries";
+import { getChatById, getMessagesByChatId } from "@/lib/mock-store/queries";
 import { convertToUIMessages } from "@/lib/utils";
 
 export async function GET(request: Request) {

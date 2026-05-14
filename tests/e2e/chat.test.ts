@@ -8,7 +8,7 @@ test.describe("Chat Page", () => {
 
     await expect(page.getByText("BioAnalyst")).toBeVisible();
     await expect(page.getByText("AI DATA INTELLIGENCE")).toBeVisible();
-    await expect(page.getByText("New Tasks")).toBeVisible();
+    await expect(page.getByText("New Task")).toBeVisible();
     await expect(page.getByText("weikun rong's team")).toBeVisible();
     await expect(page.getByText("New Task")).toBeVisible();
     await expect(page.getByText("Analyze outliers in dose...")).toBeVisible();
