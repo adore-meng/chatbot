@@ -2,6 +2,7 @@
 
 import { CreditCardIcon, LogOutIcon, SettingsIcon } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,15 +18,20 @@ const FALLBACK_USER = {
 };
 
 export function WorkbenchHeader() {
+  const pathname = usePathname();
   const { email, initials, name } = FALLBACK_USER;
   const logoutPath = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/api/auth/logout`;
+  const headerTitle = getWorkbenchHeaderTitle(pathname);
 
   return (
     <header className="flex h-14 shrink-0 items-center justify-between border-b border-slate-100 bg-white px-6">
       <div className="flex items-center gap-2">
         <span className="size-1.5 rounded-full bg-slate-300" />
-        <span className="font-semibold text-[13px] text-slate-900">
-          New Tasks
+        <span
+          className="font-semibold text-[13px] text-slate-900"
+          data-testid="workbench-title"
+        >
+          {headerTitle}
         </span>
       </div>
 
@@ -82,4 +88,28 @@ export function WorkbenchHeader() {
       </DropdownMenu>
     </header>
   );
+}
+
+const ROUTE_TITLE_MAP: Record<string, string> = {
+  "/": "New Task",
+  "/recent": "Recent",
+  "/community": "Community",
+  "/projects": "All Projects",
+};
+
+function getWorkbenchHeaderTitle(pathname: string): string {
+  if (ROUTE_TITLE_MAP[pathname]) {
+    return ROUTE_TITLE_MAP[pathname];
+  }
+
+  if (pathname.startsWith("/tasks/")) {
+    return "Task Details";
+  }
+
+  // Existing session URLs use /chat/[id] until migrated to /tasks/
+  if (pathname.startsWith("/chat/")) {
+    return "Task Details";
+  }
+
+  return "Workspace";
 }

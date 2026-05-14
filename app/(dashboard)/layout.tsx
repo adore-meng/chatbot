@@ -7,9 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense
-      fallback={<DashboardShell defaultOpen>{children}</DashboardShell>}
-    >
+    <Suspense fallback={<DashboardShellFallback />}>
       <SidebarShell>{children}</SidebarShell>
     </Suspense>
   );
@@ -49,5 +47,17 @@ function DashboardShell({
         </div>
       </div>
     </SidebarProvider>
+  );
+}
+
+function DashboardShellFallback() {
+  return (
+    <div className="flex h-screen w-full bg-white text-slate-900">
+      <aside className="h-screen w-64 shrink-0 border-r border-slate-100 bg-white" />
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="h-14 shrink-0 border-b border-slate-100 bg-white" />
+        <main className="min-h-0 flex-1 overflow-hidden bg-[#f7f8fd]" />
+      </div>
+    </div>
   );
 }
